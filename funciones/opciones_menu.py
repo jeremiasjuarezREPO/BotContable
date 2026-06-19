@@ -153,7 +153,10 @@ def cargar_factura():
 def registrar_proveedor():
     print("A continuación deberá ingresar el ID y nombre del proveedor que desea añadir.\n")
 
-    # ---------- Validar ID ----------
+    # ---------- ESPERANDO_INFORMACION_PROVEEDOR ----------
+    estado = "ESPERANDO_INFORMACION_PROVEEDOR"
+
+    # Validar ID
     while True:
         try:
             id_nuevo_proveedor = int(input("Ingrese el ID del proveedor: "))
@@ -171,7 +174,7 @@ def registrar_proveedor():
         except ValueError:
             print("Error: el ID debe ser un número entero.")
 
-    # ---------- Validar Nombre ----------
+    # Validar Nombre
     while True:
         nombre_nuevo_proveedor = input("Ingrese el nombre del proveedor: ").strip().lower()
 
@@ -189,26 +192,24 @@ def registrar_proveedor():
 
         break
 
-    # Verificar si el archivo existe para saber si hay que escribir el encabezado
+    # ---------- GUARDANDO_PROVEEDOR ----------
+    estado = "GUARDANDO_PROVEEDOR"
+
     archivo_existe = os.path.exists(RUTA_PROVEEDORES) and os.path.getsize(RUTA_PROVEEDORES) > 0
 
-    # Bloque try/except. Almacena la logica para la escritura del archivo y manejo de posibles errores
     try:
         with open(RUTA_PROVEEDORES, "a", newline="", encoding="utf-8") as archivo:
 
             escritor = csv.DictWriter(archivo, fieldnames=["ID", "Nombre"])
 
-            # Si el archivo no existia, escribe el encabezado primero
             if not archivo_existe:
                 escritor.writeheader()
 
-            # Definicion de diccionario con los datos del proveedor a guardar
             nuevo_proveedor = {
                 "ID": id_nuevo_proveedor,
                 "Nombre": nombre_nuevo_proveedor
             }
 
-            # Añade una fila al final del archivo con los datos del nuevo proveedor
             escritor.writerow(nuevo_proveedor)
 
     except FileNotFoundError:
@@ -227,7 +228,6 @@ def registrar_proveedor():
         print(f"Ocurrió un error inesperado: {type(error).__name__} = {error}")
         return
 
-    # Mensaje de exito
     print("")
     print(f"Se añadió con éxito el proveedor '{nombre_nuevo_proveedor}' con la siguiente información:\n")
     print(f"ID: {id_nuevo_proveedor}")
