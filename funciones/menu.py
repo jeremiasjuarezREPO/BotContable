@@ -11,7 +11,7 @@ def iniciar_sistema():
         print("3. Salir")
 
         try:
-            opcion = int(input("Seleccione una opción: "))
+            opcion = int(input("\nSeleccione una opción: "))
 
             if opcion == 1:
                 cargar_factura()
