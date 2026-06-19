@@ -11,21 +11,24 @@ Aplicación de consola desarrollada en Python para la gestión de facturas y pro
 ---
 
 ## Estructura del proyecto
+
 Bot Contable/
-
-├── main.py
-
-├── proveedores.csv
-
+│
+├── docs/
+│   └── TPI Organizacion Empresarial 2026 Juarez Jeremias - Elias Ceballos Rey.pdf
+|
 ├── facturas/
-
 │   └── facturas.csv
+│
+├── funciones/
+│   ├── menu.py
+│   └── opciones_menu.py
+|
+├── main.py
+├── proveedores.csv
+│
+└── README.md
 
-└── funciones/
-
-├── menu.py
-
-└── opciones_menu.py
 
 ---
 
