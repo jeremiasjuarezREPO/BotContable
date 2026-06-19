@@ -3,8 +3,37 @@ import csv
 import os
 from datetime import datetime
 
-RUTA_PROVEEDORES = "proveedores.csv"
-RUTA_FACTURAS = os.path.join("facturas", "facturas.csv")
+import csv
+import os
+from datetime import datetime
+
+# Ruta absoluta basada en la ubicacion de este archivo
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+RUTA_PROVEEDORES = os.path.join(BASE_DIR, "proveedores.csv")
+RUTA_FACTURAS = os.path.join(BASE_DIR, "facturas", "facturas.csv")
+
+
+#?? Funcion que busca duplicado en los id del csv de proveedores
+
+def existe_proveedor_en_base_datos(id_proveedor):
+
+    existe_proveedor = False
+
+    try:
+        with open(RUTA_PROVEEDORES, "r", newline="", encoding="utf-8") as archivo:
+            lector = csv.DictReader(archivo)
+
+            for fila in lector:
+                if int(fila["ID"]) == id_proveedor:
+                    existe_proveedor = True
+                    break
+
+    except FileNotFoundError:
+        existe_proveedor = False  # Si no existe el archivo, no hay duplicados
+
+    return existe_proveedor
+
 
 
 #!! ---------------------------------Cargar Factura
@@ -122,43 +151,18 @@ def cargar_factura():
 #!! ---------------------------------Registrar proveedor
 
 def registrar_proveedor():
-    estado = "INICIALIZANDO"
+    print("A continuación deberá ingresar el ID y nombre del proveedor que desea añadir.\n")
 
-    # Crear el archivo con cabecera si no existe
-    estado = "VERIFICANDO_ARCHIVO_PROVEEDORES"
-
-    if not os.path.exists(RUTA_PROVEEDORES):
-        estado = "CREANDO_ARCHIVO_PROVEEDORES"
-
-        with open(RUTA_PROVEEDORES, "w", newline="", encoding="utf-8") as archivo:
-            escritor = csv.writer(archivo)
-            escritor.writerow(["ID", "Nombre"])
-
-    # Leer proveedores existentes
-    estado = "LEYENDO_PROVEEDORES_EXISTENTES"
-
-    ids_existentes = set()
-
-    with open(RUTA_PROVEEDORES, "r", newline="", encoding="utf-8") as archivo:
-        lector = csv.reader(archivo)
-        next(lector, None)
-
-        for fila in lector:
-            if fila:
-                ids_existentes.add(int(fila[0]))
-
-    # Estado: esperando ID
-    estado = "ESPERANDO_ID_PROVEEDOR"
-
+    # ---------- Validar ID ----------
     while True:
         try:
-            id_proveedor = int(input("Ingrese el ID del proveedor: "))
+            id_nuevo_proveedor = int(input("Ingrese el ID del proveedor: "))
 
-            if id_proveedor <= 0:
+            if id_nuevo_proveedor <= 0:
                 print("Error: el ID debe ser un número mayor que cero.")
                 continue
 
-            if id_proveedor in ids_existentes:
+            if existe_proveedor_en_base_datos(id_nuevo_proveedor):
                 print("Error: ese ID ya está registrado.")
                 continue
 
@@ -167,36 +171,67 @@ def registrar_proveedor():
         except ValueError:
             print("Error: el ID debe ser un número entero.")
 
-    # Estado: esperando nombre
-    estado = "ESPERANDO_NOMBRE_PROVEEDOR"
-
+    # ---------- Validar Nombre ----------
     while True:
-        nombre = input("Ingrese el nombre del proveedor: ").strip().lower()
+        nombre_nuevo_proveedor = input("Ingrese el nombre del proveedor: ").strip().lower()
 
-        if nombre == "":
+        if nombre_nuevo_proveedor == "":
             print("Error: el nombre no puede estar vacío.")
             continue
 
-        if nombre.isdigit():
+        if nombre_nuevo_proveedor.isdigit():
             print("Error: el nombre no puede contener solo números.")
             continue
 
-        if len(nombre) > 20:
+        if len(nombre_nuevo_proveedor) > 20:
             print("Error: el nombre no puede superar los 20 caracteres.")
             continue
 
         break
 
-    # Guardar proveedor
-    estado = "GUARDANDO_PROVEEDOR"
+    # Verificar si el archivo existe para saber si hay que escribir el encabezado
+    archivo_existe = os.path.exists(RUTA_PROVEEDORES) and os.path.getsize(RUTA_PROVEEDORES) > 0
 
-    with open(RUTA_PROVEEDORES, "a", newline="", encoding="utf-8") as archivo:
-        escritor = csv.writer(archivo)
-        escritor.writerow([id_proveedor, nombre])
+    # Bloque try/except. Almacena la logica para la escritura del archivo y manejo de posibles errores
+    try:
+        with open(RUTA_PROVEEDORES, "a", newline="", encoding="utf-8") as archivo:
 
-    estado = "FINALIZADO"
+            escritor = csv.DictWriter(archivo, fieldnames=["ID", "Nombre"])
 
-    print("Proveedor registrado correctamente.")
+            # Si el archivo no existia, escribe el encabezado primero
+            if not archivo_existe:
+                escritor.writeheader()
+
+            # Definicion de diccionario con los datos del proveedor a guardar
+            nuevo_proveedor = {
+                "ID": id_nuevo_proveedor,
+                "Nombre": nombre_nuevo_proveedor
+            }
+
+            # Añade una fila al final del archivo con los datos del nuevo proveedor
+            escritor.writerow(nuevo_proveedor)
+
+    except FileNotFoundError:
+        print("Error: no se encontró el archivo en la ruta especificada.")
+        return
+
+    except PermissionError:
+        print("Error: no posee permisos para la escritura del archivo. Verifique que no esté siendo utilizado por otra aplicación.")
+        return
+
+    except UnicodeDecodeError:
+        print("Error: el formato de codificación de caracteres no es compatible.")
+        return
+
+    except Exception as error:
+        print(f"Ocurrió un error inesperado: {type(error).__name__} = {error}")
+        return
+
+    # Mensaje de exito
+    print("")
+    print(f"Se añadió con éxito el proveedor '{nombre_nuevo_proveedor}' con la siguiente información:\n")
+    print(f"ID: {id_nuevo_proveedor}")
+    print(f"Nombre: {nombre_nuevo_proveedor}\n")
 
 
 #!! ----------------------------- Salir
