@@ -16,6 +16,8 @@ Bot Contable/
 │
 ├── docs/
 │   └── TPI Organizacion Empresarial 2026 Juarez Jeremias - Elias Ceballos Rey.pdf
+│   └── BPMN AS IS Diagrama de proceso.bpm
+│   └── BPMN TO BE Diagrama de proceso.bpm
 |
 ├── facturas/
 │   └── facturas.csv
