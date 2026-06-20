@@ -21,8 +21,8 @@ Bot Contable/
 ├── facturas/
 │   └── facturas.csv
 ├── funciones/
-├── menu.py
-├── opciones_menu.py
+│   ├── menu.py
+│   └── opciones_menu.py
 ├── main.py
 ├── proveedores.csv
 └── README.md
