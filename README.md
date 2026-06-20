@@ -12,23 +12,19 @@ Aplicación de consola desarrollada en Python para la gestión de facturas y pro
 
 ## Estructura del proyecto
 
+```text
 Bot Contable/
-│
 ├── docs/
-│   └── TPI Organizacion Empresarial 2026 Juarez Jeremias - Elias Ceballos Rey.pdf
-│   └── BPMN AS IS Diagrama de proceso.bpm
+│   ├── TPI Organizacion Empresarial 2026 Juarez Jeremias - Elias Ceballos Rey.pdf
+│   ├── BPMN AS IS Diagrama de proceso.bpm
 │   └── BPMN TO BE Diagrama de proceso.bpm
-|
 ├── facturas/
 │   └── facturas.csv
-│
 ├── funciones/
-│   ├── menu.py
-│   └── opciones_menu.py
-|
+├── menu.py
+├── opciones_menu.py
 ├── main.py
 ├── proveedores.csv
-│
 └── README.md
 
 
